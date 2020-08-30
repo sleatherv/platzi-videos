@@ -1,26 +1,22 @@
 import React, { useState, useEffect } from "react";
-import Header from '../components/Header';
+import { connect } from 'react-redux';
 import Search from '../components/Search';
 import Categories from '../components/Categories';
 import Carousel from '../components/Carousel';
 import CarouselItem from '../components/CarouselItem';
-import Footer from '../components/Footer'
 import '../assets/styles/App.scss';
 // hooks
 import useInitialState from '../hooks/useInitialState';
 
-const API = 'http://localhost:3000/initalState/';
-
-const Home = () => {
-    const initialState = useInitialState(API);
+const Home = ({ myList, trends, originals }) => {
     return (
         //esto es un fragment
         <>
             <Search />
-            {initialState.mylist.length > 0 && (
+            {myList.length > 0 && (
                 <Categories title='Mi Lista'>
                     <Carousel>
-                        {initialState.mylist.map(item =>
+                        {myList.map(item =>
                             <CarouselItem key={item.id} {...item} />)}
                     </Carousel>
                 </Categories>
@@ -29,18 +25,25 @@ const Home = () => {
 
             <Categories title='Tendencias'>
                 <Carousel>
-                    {initialState.trends.map(item =>
+                    {trends.map(item =>
                         <CarouselItem key={item.id} {...item} />)}
                 </Carousel>
             </Categories>
             <Categories title='Originales de Platzi Video'>
                 <Carousel>
-                    {initialState.originals.map(item =>
+                    {originals.map(item =>
                         <CarouselItem key={item.id} {...item} />)}
                 </Carousel>
             </Categories>
         </>
     )
 }
-
-export default Home;
+const mapStateToProps = state => {
+    return {
+        myList: state.myList,
+        trends: state.trends,
+        originals: state.originals,
+    };
+}
+// export default connect(props, actions)(Home);
+export default connect(mapStateToProps, null)(Home);
