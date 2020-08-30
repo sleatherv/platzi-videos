@@ -14,8 +14,8 @@ const API = 'http://localhost:3000/initalState/';
 const Home = () => {
     const initialState = useInitialState(API);
     return (
-        <div className="app">
-            <Header />
+        //esto es un fragment
+        <>
             <Search />
             {initialState.mylist.length > 0 && (
                 <Categories title='Mi Lista'>
@@ -39,9 +39,7 @@ const Home = () => {
                         <CarouselItem key={item.id} {...item} />)}
                 </Carousel>
             </Categories>
-
-            <Footer />
-        </div>
+        </>
     )
 }
 
