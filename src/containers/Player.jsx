@@ -1,17 +1,42 @@
-import React from 'react';
+import React, { useEffect, useLayoutEffect } from 'react';
+import { connect } from 'react-redux';
+import { Redirect } from 'react-router-dom';
+import { getVideoSource } from '../actions/index';
+import '../assets/styles/components/Player.scss';
 
-const Player = () => {
-    return (
+
+const Player = (props) => {
+    const { id } = props.match.params;
+    const hasPlaying = Object.keys(props.playing).length > 0;
+
+    useLayoutEffect(() => { //usamos useLayout effect para que renderice de forma sincrona en este momento
+        props.getVideoSource(id);
+    }, []) //si no le pasamos este elemento [] se creara un loop infinito
+
+    return hasPlaying ? (
         <div className="Player">
             <video controls autoPlay>
-                <source src="" type="video/mp4" />
+                <source src={props.playing.source} type="video/mp4" />
             </video>
-            <div className="Player-black">
-                <button type="button">Regresar</button>
+            <div className="Player-back">
+                <button type="button" onClick={() => props.history.goBack()}>
+                    Regresar
+                </button>
             </div>
         </div>
-    );
+    ) : <Redirect to="/404/" />;
 }
 
-export default Player;
+const mapStateToProps = state => {
+    return {
+        playing: state.playing
+    }
+}
+//creamos la accion
+const mapDispathToProps = {
+    getVideoSource,
+}
+
+export default connect(mapStateToProps, mapDispathToProps)(Player);
+
 
