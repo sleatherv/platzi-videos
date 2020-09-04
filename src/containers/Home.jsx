@@ -14,7 +14,7 @@ const Home = ({ myList, trends, originals }) => {
         //esto es un fragment
         <>
             <Header />
-            <Search />
+            <Search isHome />
             {myList.length > 0 && (
                 <Categories title='Mi Lista'>
                     <Carousel>
