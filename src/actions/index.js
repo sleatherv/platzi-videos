@@ -21,7 +21,13 @@ export const registerRequest = payload => ({
     type: 'REGISTER_REQUEST',
     payload,
 });
+
 export const getVideoSource = payload => ({
     type: 'GET_VIDEO_SOURCE',
+    payload,
+});
+
+export const searchVideo = payload => ({
+    type: 'SEARCH_VIDEO',
     payload,
 });

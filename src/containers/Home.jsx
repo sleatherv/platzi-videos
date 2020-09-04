@@ -9,12 +9,25 @@ import '../assets/styles/App.scss';
 // hooks
 import useInitialState from '../hooks/useInitialState';
 
-const Home = ({ myList, trends, originals }) => {
+const Home = ({ myList, trends, originals, searchResult }) => {
     return (
         //esto es un fragment
         <>
             <Header />
             <Search isHome />
+            {searchResult.length > 0 && (
+                <Categories title='Results'>
+                    <Carousel>
+                        {searchResult.map(item =>
+                            <CarouselItem
+                                key={item.id}
+                                {...item}
+                            //de esta manera su valor es true
+                            />)}
+                    </Carousel>
+                </Categories>
+            )
+            }
             {myList.length > 0 && (
                 <Categories title='Mi Lista'>
                     <Carousel>
@@ -49,6 +62,7 @@ const mapStateToProps = state => {
         myList: state.myList,
         trends: state.trends,
         originals: state.originals,
+        searchResult: state.searchResult,
     };
 }
 // export default connect(props, actions)(Home);
