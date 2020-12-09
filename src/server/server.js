@@ -1,5 +1,7 @@
 import express from 'express';
 import dotenv from 'dotenv';
+import webpack from 'webpack';
+
 
 dotenv.config();
 
@@ -8,7 +10,14 @@ const app = express();
 
 app.get('*', (req, res) => {
     if (ENV === 'development') {
-        console.log('Development Config');
+        const webpackConfig = require('../../webpack.config');
+        const webpackDevMiddleware = require('webpack-dev-middleware');
+        const webpackHotMiddleware = require('webpack-hot-middleware');
+        const compiler = webpack(webpackConfig);
+        const serverConfig = { port: PORT, hot: true };
+
+        app.use(webpackDevMiddleware(compiler, serverConfig));
+        app.use(webpackHotMiddleware(compiler));
     }
     res.send({ hello: 'express' });
 });
