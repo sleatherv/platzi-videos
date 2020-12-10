@@ -4,7 +4,7 @@ import { Router } from 'react-router';
 import { Provider } from 'react-redux';
 import { createStore, compose } from 'redux';
 import { createBrowserHistory } from 'history';
-
+import initialState from './initialState';
 import reducer from './reducers'
 import App from './routes/App';
 
