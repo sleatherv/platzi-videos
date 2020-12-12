@@ -75,3 +75,5 @@ yarn-error.log
 # Build
 dist/
 src/assets/styles/components/Player.scss:Zone.Identifier
+
+src/server/public
