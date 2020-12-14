@@ -2,6 +2,7 @@ const path = require('path');
 const webpack = require('webpack');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CompressionWebPackPlugin = require('compression-webpack-plugin');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 const ManifestPlugin = require('webpack-manifest-plugin');
 
@@ -49,6 +50,12 @@ module.exports = {
     module: {
         rules: [
             {
+                enforce: 'pre',
+                test: /\.(js|jsx)$/,
+                exclude: /node_modules/,
+                loader: "eslint-loader",
+            },
+            {
                 test: /\.(js|jsx)$/,
                 exclude: /node_modules/,
                 use: {
@@ -93,5 +100,9 @@ module.exports = {
         new MiniCssExtractPlugin({
             filename: isDev ? 'assets/app.css' : 'assets/app-[hash].css',
         }),
+        isDev ? () => { } :
+            new CleanWebpackPlugin({
+                cleanOnceBeforeBuildPatterns: path.resolve(__dirname, 'src/server/public')
+            })
     ]
 }

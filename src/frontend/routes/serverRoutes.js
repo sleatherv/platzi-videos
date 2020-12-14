@@ -6,30 +6,30 @@ import Player from '../containers/Player';
 
 //the server-side router needs a path array
 const routes = [
-    {
-        exact: true,
-        path: '/',
-        component: Home,
-    },
-    {
-        exact: true,
-        path: '/login',
-        component: Login,
-    },
-    {
-        exact: true,
-        path: '/register',
-        component: Register,
-    },
-    {
-        exact: true,
-        path: '/player/:id',
-        component: Player,
-    },
-    {
-        name: 'NotFound',
-        component: NotFound,
-    },
+  {
+    exact: true,
+    path: '/',
+    component: Home,
+  },
+  {
+    exact: true,
+    path: '/login',
+    component: Login,
+  },
+  {
+    exact: true,
+    path: '/register',
+    component: Register,
+  },
+  {
+    exact: true,
+    path: '/player/:id',
+    component: Player,
+  },
+  {
+    name: 'NotFound',
+    component: NotFound,
+  },
 ];
 
 export default routes;
