@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import Header from '../components/Header';
-import { registerRequest } from '../actions/index';
+import { registerUser } from '../actions/index';
 import '../assets/styles/components/Register.scss';
 
 const Register = (props) => {
@@ -13,7 +13,7 @@ const Register = (props) => {
       password: '',
     },
   );
-  const handleInput = (event) => {
+  const updateInput = (event) => {
     setValues({
       ...form,
       [event.target.name]: event.target.value,
@@ -21,8 +21,7 @@ const Register = (props) => {
   };
   const handleSubmit = (event) => {
     event.preventDefault();
-    props.registerRequest(form);
-    props.history.push('/');
+    props.registerUser(form, '/login');
   };
   return (
     <>
@@ -36,23 +35,23 @@ const Register = (props) => {
               className='input'
               type='text'
               placeholder='Nombre'
-              onChange={handleInput}
+              onChange={updateInput}
             />
             <input
               name='email'
               className='input'
               type='text'
               placeholder='Correo'
-              onChange={handleInput}
+              onChange={updateInput}
             />
             <input
               name='password'
               className='input'
               type='password'
               placeholder='Contraseña'
-              onChange={handleInput}
+              onChange={updateInput}
             />
-            <button type='button' className='button'>Registrarme</button>
+            <button type='button' className='submit'>Registrarme</button>
           </form>
           <Link to='/login'>Iniciar sesión</Link>
         </section>
@@ -61,8 +60,12 @@ const Register = (props) => {
   );
 };
 
-const mapDistpatchToProps = {
-  registerRequest,
+const mapDispatchToProps = {
+  registerUser,
 };
 
-export default connect(null, mapDistpatchToProps)(Register);
+Register.propTypes = {
+  registerUser: PropTypes.func,
+};
+
+export default connect(null, mapDispatchToProps)(Register);
