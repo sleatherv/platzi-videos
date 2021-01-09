@@ -7,17 +7,29 @@ import helmet from 'helmet';
 import { renderToString } from 'react-dom/server';
 import { renderRoutes } from 'react-router-config';
 import { Provider } from 'react-redux';
-import { createStore, compose } from 'redux';
+import { createStore } from 'redux';
 import { StaticRouter } from 'react-router-dom';
-import reducer from "../frontend/reducers";
+import reducer from '../frontend/reducers';
 import initialState from '../frontend/initialState';
 import serverRoutes from '../frontend/routes/serverRoutes';
 import getManifest from './getManifest';
+
+import cookieParser from 'cookie-parser';
+import boom from '@hapi/boom';
+import passport from 'passport';
+import axios from 'axios';
 
 dotenv.config();
 
 const { ENV, PORT } = process.env;
 const app = express();
+
+app.use(express.json());
+app.use(cookieParser());
+app.use(passport.initialize());
+app.use(passport.session());
+
+require('./utils/auth/strategies/basic');
 
 if (ENV === 'development') {
   console.log('Development config');
@@ -62,7 +74,7 @@ const setResponse = (html, preloadedState, manifest) => {
         </body>
       </html>
     `);
-}
+};
 
 const renderApp = (req, res) => {
   const store = createStore(reducer, initialState);
@@ -72,11 +84,57 @@ const renderApp = (req, res) => {
       <StaticRouter location={req.url} context={{}}>
         {renderRoutes(serverRoutes)}
       </StaticRouter>
-    </Provider>
+    </Provider>,
   );
   res.send(setResponse(html, preloadedState, req.hashManifest));
 };
+app.post("/auth/sign-in", async function (req, res, next) {
+  // Obtenemos el atributo rememberMe desde el cuerpo del request
+  const { rememberMe } = req.body;
+  passport.authenticate('basic', function (error, data) {
+    try {
+      if (error || !data) {
+        next(boom.unauthorized());
+      }
+      req.login(data, { session: false }, async function (err) {
+        if (err) {
+          next(err);
+        }
+        const { token, ...user } = data;
+        if (!config.dev) {
+          res.cookie("token", token, {
+            httpOnly: true,
+            secure: true,
+            maxAge: rememberMe ? THIRTY_DAYS_IN_SEC : TWO_HOURS_IN_SEC
+          });
+        } else {
+          res.cookie('token', token, { withCredentials: true });
+          res.status(200).json(user);
+        }
+      });
+    } catch (error) {
+      next(error);
+    }
+  })(req, res, next);
+});
 
+app.post("/auth/sign-up", async function (req, res, next) {
+  const { body: user } = req;
+  try {
+    await axios({
+      url: `${config.apiUrl}/api/auth/sign-up`,
+      method: 'post',
+      data: user
+    });
+
+    res.status(201).json({
+      message: "User Created"
+    });
+
+  } catch (error) {
+    next(error);
+  }
+});
 app.get('*', renderApp);
 
 app.listen(PORT, (err) => {
