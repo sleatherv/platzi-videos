@@ -34,7 +34,7 @@ const reducer = (state, action) => {
         ...state,
         playing: state.trends.find(item => item.id === Number(action.payload)) ||
           state.originals.find(item => item.id === Number(action.payload)) ||
-          [],
+          {},
       };
     case 'SEARCH_VIDEO':
       if (action.payload === '') return { ...state, searchResult: [] };

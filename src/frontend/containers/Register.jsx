@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
+import PropTypes from 'prop-types';
 import Header from '../components/Header';
 import { registerUser } from '../actions/index';
 import '../assets/styles/components/Register.scss';
@@ -51,7 +52,7 @@ const Register = (props) => {
               placeholder='Contraseña'
               onChange={updateInput}
             />
-            <button type='button' className='submit'>Registrarme</button>
+            <button type='submit' className='button'>Registrarme</button>
           </form>
           <Link to='/login'>Iniciar sesión</Link>
         </section>

@@ -10,15 +10,14 @@ import { renderRoutes } from 'react-router-config';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
 import { StaticRouter } from 'react-router-dom';
-import reducer from '../frontend/reducers';
-import initialState from '../frontend/initialState';
-import serverRoutes from '../frontend/routes/serverRoutes';
-import getManifest from './getManifest';
-
 import cookieParser from 'cookie-parser';
 import boom from '@hapi/boom';
 import passport from 'passport';
 import axios from 'axios';
+import reducer from '../frontend/reducers';
+import initialState from '../frontend/initialState';
+import serverRoutes from '../frontend/routes/serverRoutes';
+import getManifest from './getManifest';
 
 dotenv.config();
 
@@ -106,7 +105,7 @@ app.post('/auth/sign-in', async function (req, res, next) {
           res.cookie('token', token, {
             httpOnly: true,
             secure: true,
-            maxAge: rememberMe ? THIRTY_DAYS_IN_SEC : TWO_HOURS_IN_SEC
+            maxAge: rememberMe ? THIRTY_DAYS_IN_SEC : TWO_HOURS_IN_SEC,
           });
         } else {
           res.cookie('token', token, { withCredentials: true });
@@ -123,7 +122,7 @@ app.post('/auth/sign-up', async function (req, res, next) {
   const { body: user } = req;
   try {
     const userData = await axios({
-      url: `${proccess.env.API_URL}/api/auth/sign-up`,
+      url: `${process.env.API_URL}/api/auth/sign-up`,
       method: 'post',
       data: {
         'email': user.email,
