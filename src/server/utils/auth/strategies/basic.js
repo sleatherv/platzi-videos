@@ -22,7 +22,6 @@ passport.use(
           apiKeyToken: process.env.API_KEY_TOKEN,
         },
       });
-
       if (!data || status !== 200) {
         return cb(boom.unauthorized(), false);
       }
