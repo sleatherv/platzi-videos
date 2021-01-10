@@ -10,18 +10,16 @@ import '../assets/styles/App.scss';
 
 const Home = ({ myList, trends, originals, searchResult }) => {
   return (
-    //esto es un fragment
     <>
-      <Header />
-      <Search isHome />
+      <Header key='header' />
+      <Search key='search' isHome />
       {searchResult.length > 0 && (
-        <Categories title='Results'>
-          <Carousel>
+        <Categories key='Results' title='Results'>
+          <Carousel key='CResults'>
             {searchResult.map(item => (
               <CarouselItem
                 key={item.id}
                 {...item}
-              //de esta manera su valor es true
               />
             ))}
           </Carousel>
@@ -29,8 +27,8 @@ const Home = ({ myList, trends, originals, searchResult }) => {
       )
       }
       {myList.length > 0 && (
-        <Categories title='Mi Lista'>
-          <Carousel>
+        <Categories key='MyList' title='Mi Lista'>
+          <Carousel key='CMyList'>
             {myList.map(item => (
               <CarouselItem
                 key={item.id}
@@ -42,15 +40,14 @@ const Home = ({ myList, trends, originals, searchResult }) => {
         </Categories>
       )
       }
-
-      <Categories title='Tendencias'>
-        <Carousel>
+      <Categories key='Trends' title='Tendencias'>
+        <Carousel key='CTrends'>
           {trends.map(item => <CarouselItem key={item.id} {...item} />)}
         </Carousel>
       </Categories>
-      <Categories title='Originales de Platzi Video'>
-        <Carousel>
-          {originals.map(item => <CarouselItem key={item.id} {...item} />)}
+      <Categories key='Originals' title='Originales de Platzi Video'>
+        <Carousel key='COriginals'>
+          {originals.map(item => <CarouselItem key={item.id ? item.id : item._id} {...item} />)}
         </Carousel>
       </Categories>
     </>

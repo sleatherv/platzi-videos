@@ -86,12 +86,31 @@ const renderApp = async (req, res) => {
       method: 'GET',
     });
     movieList = movieList.data.data;
+
+    let userMovieList = await axios({
+      url: `${process.env.API_URL}/api/user-movies/?userId=${id}`,
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    userMovieList = userMovieList.data.data;
+
+    const userList = [];
+    userMovieList.forEach((userMovie) => {
+      movieList.forEach((movie) => {
+        if (movie._id === userMovie.movieId) {
+          userList.push(movie);
+        }
+      });
+    });
+
     initialState = {
       user: {
         id, email, name,
       },
       searchResult: [],
-      myList: [],
+      myList: userList,
       trends: movieList.filter(movie => movie.contentRating === 'PG' && movie._id),
       originals: movieList.filter(movie => movie.contentRating === 'G' && movie._id),
     };
@@ -167,6 +186,65 @@ app.post('/auth/sign-up', async function (req, res, next) {
     next(error);
   }
 });
+app.post('/user-movies', async (req, res, next) => {
+  try {
+    const { body: userMovie } = req;
+    const { token } = req.cookies;
+
+    const { data, status } = await axios({
+      url: `${process.env.API_URL}/api/user-movies`,
+      headers: { Authorization: `Bearer ${token}` },
+      method: 'post',
+      data: userMovie,
+    });
+
+    if (status !== 201) {
+      return next(boom.badImplementation());
+    }
+
+    res.status(201).json(data);
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.delete('/user-movies/:userMovieId', async (req, res, next) => {
+  try {
+    const { userMovieId } = req.params;
+    const { token, id } = req.cookies;
+    let userMovies = await axios({
+      url: `${process.env.API_URL}/api/user-movies/?userId=${id}`,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      method: 'get',
+    });
+    userMovies = userMovies.data.data;
+    const listDelete = userMovies.filter(movie => movie.movieId === userMovieId);
+
+    const { data, status } = await axios({
+      url: `${process.env.API_URL}/api/user-movies/${listDelete[0]._id}`,
+      headers: { Authorization: `Bearer ${token}` },
+      method: 'delete',
+    });
+
+    if (status !== 200) {
+      return next(boom.badImplementation());
+    }
+
+    res.status(200).json(data);
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.get('*', renderApp);
+
+app.listen(PORT, (err) => {
+  if (err) console.log(err);
+  else console.log(`Server running on port ${PORT}`);
+});
+
 app.get('*', renderApp);
 
 app.listen(PORT, (err) => {

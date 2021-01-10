@@ -72,4 +72,37 @@ export const loginUser = ({ email, password }, redirectUrl) => {
   };
 };
 
-export { setFavorite as default };
+export const addFavoriteMovie = (userId, movieId, movie) => {
+  return (dispatch) => {
+    const body = {
+      userId,
+      movieId,
+    };
+    axios.post('/user-movies', body)
+      .then(({ data }) => {
+        const {
+          data: { movieExist },
+        } = data;
+
+        if (!movieExist) {
+          dispatch(setFavorite(movie));
+        }
+
+      })
+      .catch(error => dispatch(setError(error)));
+  };
+};
+
+export const deleteFavoriteMovie = (userMovieId, movieId) => {
+  return (dispatch) => {
+    axios.delete(`/user-movies/${userMovieId}`)
+      .then(({ status }) => {
+        if (status === 200) {
+          dispatch(deleteFavorite(movieId));
+        }
+      })
+      .catch(error => dispatch(setError(error)));
+  };
+};
+
+// export { setFavorite as default };
